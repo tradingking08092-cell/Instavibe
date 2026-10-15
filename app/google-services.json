@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "597011347952",
+    "project_id": "instavibe-d0486",
+    "storage_bucket": "instavibe-d0486.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:597011347952:android:75179778a0afb837b70535",
+        "android_client_info": {
+          "package_name": "com.instavibe.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_yu9ganjf-9HdIdgLE_8O6_2DiZrwgYc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
