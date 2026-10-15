@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  function signedIn() { return request.auth != null; }
+  function owner(uid) { return signedIn() && request.auth.uid == uid; }
+  match /users/{uid} {
+   allow read: if signedIn();
+   allow create, update: if owner(uid) && request.resource.data.keys().hasOnly(['uid','name','bio']) && request.resource.data.uid == uid && request.resource.data.name is string && request.resource.data.name.size() <= 60 && request.resource.data.bio is string && request.resource.data.bio.size() <= 250;
+   allow delete: if false;
+   match /following/{target} {
+    allow read: if signedIn();
+    allow create, update, delete: if owner(uid) && target != uid;
+   }
+  }
+  match /posts/{postId} {
+   allow read: if signedIn();
+   allow create: if signedIn() && request.resource.data.keys().hasOnly(['id','uid','author','caption','mediaUrl','mediaType','createdAt']) && request.resource.data.id == postId && request.resource.data.uid == request.auth.uid && request.resource.data.caption is string && request.resource.data.caption.size() <= 2000 && request.resource.data.mediaType in ['image','video'] && request.resource.data.mediaUrl is string && request.resource.data.mediaUrl.size() <= 4096 && request.resource.data.createdAt is int;
+   allow update: if false;
+   allow delete: if owner(resource.data.uid);
+   match /likes/{uid} {
+    allow read: if signedIn();
+    allow create, update, delete: if owner(uid) && exists(/databases/$(database)/documents/posts/$(postId));
+   }
+   match /comments/{commentId} {
+    allow read: if signedIn();
+    allow create: if signedIn() && exists(/databases/$(database)/documents/posts/$(postId)) && request.resource.data.keys().hasOnly(['uid','author','text','createdAt']) && request.resource.data.uid == request.auth.uid && request.resource.data.text is string && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 1000;
+    allow delete: if signedIn() && (resource.data.uid == request.auth.uid || get(/databases/$(database)/documents/posts/$(postId)).data.uid == request.auth.uid);
+    allow update: if false;
+   }
+  }
+ }
+}
