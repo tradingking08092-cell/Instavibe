@@ -22,7 +22,7 @@ jobs:
         with:
           gradle-version: '8.9'
 
-            - name: Accept Android SDK licenses
+      - name: Accept Android SDK licenses
         run: |
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
 
